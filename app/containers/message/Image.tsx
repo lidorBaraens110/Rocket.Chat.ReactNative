@@ -29,6 +29,7 @@ interface IMessageImage {
 	style?: StyleProp<TextStyle>[];
 	isReply?: boolean;
 	getCustomEmoji?: TGetCustomEmoji;
+	msg?: string;
 }
 
 const ImageProgress = createImageProgress(FastImage);
@@ -57,7 +58,7 @@ export const MessageImage = React.memo(({ imgUri, theme }: { imgUri: string; the
 ));
 
 const ImageContainer = React.memo(
-	({ file, imageUrl, showAttachment, getCustomEmoji, style, isReply }: IMessageImage) => {
+	({ file, imageUrl, showAttachment, getCustomEmoji, style, isReply, msg }: IMessageImage) => {
 		const { theme } = useTheme();
 		const { baseUrl, user } = useContext(MessageContext);
 		const img = imageUrl || formatAttachmentUrl(file.image_url, user.id, user.token, baseUrl);
@@ -74,12 +75,12 @@ const ImageContainer = React.memo(
 			return showAttachment(file);
 		};
 
-		if (file.description) {
+		if (msg) {
 			return (
 				<Button disabled={isReply} theme={theme} onPress={onPress}>
 					<View>
 						<Markdown
-							msg={file.description}
+							msg={msg}
 							style={[isReply && style]}
 							username={user.username}
 							getCustomEmoji={getCustomEmoji}
