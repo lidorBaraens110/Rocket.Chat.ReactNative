@@ -92,6 +92,7 @@ interface IMessageReply {
 	index: number;
 	getCustomEmoji: TGetCustomEmoji;
 	messageId: string;
+	msg?: string;
 }
 
 const Title = React.memo(
@@ -198,7 +199,7 @@ const Fields = React.memo(
 );
 
 const Reply = React.memo(
-	({ attachment, timeFormat, index, getCustomEmoji, messageId }: IMessageReply) => {
+	({ attachment, timeFormat, index, getCustomEmoji, messageId, msg }: IMessageReply) => {
 		const [loading, setLoading] = useState(false);
 		const { theme } = useTheme();
 		const { baseUrl, user, jumpToMessage } = useContext(MessageContext);
@@ -273,7 +274,7 @@ const Reply = React.memo(
 						) : null}
 					</View>
 				</Touchable>
-				<Markdown msg={attachment.description} username={user.username} getCustomEmoji={getCustomEmoji} theme={theme} />
+				<Markdown msg={msg} username={user.username} getCustomEmoji={getCustomEmoji} theme={theme} />
 			</>
 		);
 	},

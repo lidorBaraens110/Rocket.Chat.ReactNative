@@ -392,6 +392,8 @@ class MessageContainer extends React.Component<IMessageContainerProps, IMessageC
 			message = messageTranslated || message;
 		}
 
+		const canTranslateMessage = autoTranslateRoom && autoTranslateLanguage;
+
 		return (
 			<MessageContext.Provider
 				value={{
@@ -411,7 +413,8 @@ class MessageContainer extends React.Component<IMessageContainerProps, IMessageC
 					jumpToMessage,
 					threadBadgeColor,
 					toggleFollowThread,
-					replies
+					replies,
+					translateLanguage: canTranslateMessage ? autoTranslateLanguage : undefined
 				}}
 			>
 				{/* @ts-ignore*/}
