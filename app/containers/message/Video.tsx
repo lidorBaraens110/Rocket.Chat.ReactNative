@@ -38,10 +38,11 @@ interface IMessageVideo {
 	getCustomEmoji: TGetCustomEmoji;
 	style?: StyleProp<TextStyle>[];
 	isReply?: boolean;
+	msg?: string;
 }
 
 const Video = React.memo(
-	({ file, showAttachment, getCustomEmoji, style, isReply }: IMessageVideo) => {
+	({ file, showAttachment, getCustomEmoji, style, isReply, msg }: IMessageVideo) => {
 		const { baseUrl, user } = useContext(MessageContext);
 		const [loading, setLoading] = useState(false);
 		const { theme } = useTheme();
@@ -77,13 +78,7 @@ const Video = React.memo(
 
 		return (
 			<>
-				<Markdown
-					msg={file.description}
-					username={user.username}
-					getCustomEmoji={getCustomEmoji}
-					style={[isReply && style]}
-					theme={theme}
-				/>
+				<Markdown msg={msg} username={user.username} getCustomEmoji={getCustomEmoji} style={[isReply && style]} theme={theme} />
 				<Touchable
 					disabled={isReply}
 					onPress={onPress}
