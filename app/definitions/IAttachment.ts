@@ -28,6 +28,7 @@ export interface IAttachment {
 	color?: string;
 	thumb_url?: string;
 	collapsed?: boolean;
+	translations?: { [k: string]: string };
 }
 
 export interface IServerAttachment {
