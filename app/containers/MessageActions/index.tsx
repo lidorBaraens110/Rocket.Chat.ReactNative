@@ -460,7 +460,7 @@ const MessageActions = React.memo(
 				// Toggle Auto-translate
 				if (room.autoTranslate && message.u && message.u._id !== user.id) {
 					options.push({
-						title: I18n.t(message.autoTranslate ? 'View_Original' : 'Translate'),
+						title: I18n.t(message.autoTranslate !== false ? 'View_Original' : 'Translate'),
 						icon: 'language',
 						onPress: () => handleToggleTranslation(message)
 					});

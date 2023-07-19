@@ -392,7 +392,7 @@ class MessageContainer extends React.Component<IMessageContainerProps, IMessageC
 			message = messageTranslated || message;
 		}
 
-		const canTranslateMessage = autoTranslateRoom && autoTranslateLanguage;
+		const canTranslateMessage = autoTranslateRoom && autoTranslateLanguage && autoTranslateMessage !== false;
 
 		return (
 			<MessageContext.Provider
