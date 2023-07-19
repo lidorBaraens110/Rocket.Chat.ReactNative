@@ -311,7 +311,7 @@ const MessageActions = React.memo(
 					const db = database.active;
 					await db.write(async () => {
 						await message.update(m => {
-							m.autoTranslate = !m.autoTranslate;
+							m.autoTranslate = m.autoTranslate !== null ? !m.autoTranslate : false;
 							m._updatedAt = new Date();
 						});
 					});
