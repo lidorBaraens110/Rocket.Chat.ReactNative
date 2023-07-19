@@ -39,6 +39,7 @@ interface IMessageAudioProps {
 	getCustomEmoji: TGetCustomEmoji;
 	scale?: number;
 	messageId: string;
+	msg?: string;
 }
 
 interface IMessageAudioState {
@@ -275,8 +276,7 @@ class MessageAudio extends React.Component<IMessageAudioProps, IMessageAudioStat
 
 	render() {
 		const { loading, paused, currentTime, duration } = this.state;
-		const { file, getCustomEmoji, theme, scale, isReply, style } = this.props;
-		const { description } = file;
+		const { msg, getCustomEmoji, theme, scale, isReply, style } = this.props;
 		// @ts-ignore can't use declare to type this
 		const { baseUrl, user } = this.context;
 
@@ -293,13 +293,7 @@ class MessageAudio extends React.Component<IMessageAudioProps, IMessageAudioStat
 
 		return (
 			<>
-				<Markdown
-					msg={description}
-					style={[isReply && style]}
-					username={user.username}
-					getCustomEmoji={getCustomEmoji}
-					theme={theme}
-				/>
+				<Markdown msg={msg} style={[isReply && style]} username={user.username} getCustomEmoji={getCustomEmoji} theme={theme} />
 				<View
 					style={[
 						styles.audioContainer,
