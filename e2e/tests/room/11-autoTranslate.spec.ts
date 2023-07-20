@@ -56,17 +56,20 @@ export function waitForNotVisible(id: string) {
 
 describe('Auto Translate', () => {
 	let textMatcher: TTextMatcher;
-	const defaultLanguage = 'en';
-	const translatedLanguage = 'pt';
+
+	const languages = {
+		default: 'en',
+		translated: 'pt'
+	};
 
 	const oldMessage = {
-		pt: 'mensagem antiga',
-		en: 'old message'
+		[languages.default]: 'dog',
+		[languages.translated]: 'cachorro'
 	};
 
 	const newMessage = {
-		pt: 'mensagem nova',
-		en: 'new message'
+		[languages.default]: 'cat',
+		[languages.translated]: 'gato'
 	};
 
 	beforeAll(async () => {
@@ -90,7 +93,7 @@ describe('Auto Translate', () => {
 		});
 
 		it('should see old message not translated before enable auto translate', async () => {
-			await waitForVisibleTextMatcher(oldMessage[defaultLanguage], textMatcher);
+			await waitForVisibleTextMatcher(oldMessage[languages.default] as string, textMatcher);
 		});
 
 		it('should enable auto translate', async () => {
@@ -106,49 +109,49 @@ describe('Auto Translate', () => {
 			await element(by.id('auto-translate-view-switch')).tap();
 
 			// verify default language is checked
-			await waitFor(element(by.id(`auto-translate-view-${defaultLanguage}`)))
+			await waitFor(element(by.id(`auto-translate-view-${languages.default}`)))
 				.toBeVisible()
 				.whileElement(by.id('auto-translate-view'))
 				.scroll(500, 'down');
-			await waitForVisible(`auto-translate-view-${defaultLanguage}-check`);
+			await waitForVisible(`auto-translate-view-${languages.default}-check`);
 
 			// enable translated language
-			await waitFor(element(by.id(`auto-translate-view-${translatedLanguage}`)))
+			await waitFor(element(by.id(`auto-translate-view-${languages.translated}`)))
 				.toBeVisible()
 				.whileElement(by.id('auto-translate-view'))
 				.scroll(500, 'down');
-			await waitForNotVisible(`auto-translate-view-${translatedLanguage}-check`);
-			await element(by.id(`auto-translate-view-${translatedLanguage}`)).tap();
-			await waitForVisible(`auto-translate-view-${translatedLanguage}-check`);
+			await waitForNotVisible(`auto-translate-view-${languages.translated}-check`);
+			await element(by.id(`auto-translate-view-${languages.translated}`)).tap();
+			await waitForVisible(`auto-translate-view-${languages.translated}-check`);
 
 			// verify default language is unchecked
-			await waitFor(element(by.id(`auto-translate-view-${defaultLanguage}`)))
+			await waitFor(element(by.id(`auto-translate-view-${languages.default}`)))
 				.toBeVisible()
 				.whileElement(by.id('auto-translate-view'))
 				.scroll(500, 'up');
-			await waitForNotVisible(`auto-translate-view-${defaultLanguage}-check`);
+			await waitForNotVisible(`auto-translate-view-${languages.default}-check`);
 
 			await tapBack();
 			await tapBack();
 		});
 
 		it('should see old message translated after enable auto translate', async () => {
-			await waitForVisibleTextMatcher(oldMessage[translatedLanguage], textMatcher);
+			await waitForVisibleTextMatcher(oldMessage[languages.translated] as string, textMatcher);
 		});
 
 		it('should see new message translated', async () => {
 			const randomMatcher = random();
-			const data = await sendMessageOnTranslationTestRoom(`${newMessage[defaultLanguage]} - ${randomMatcher}`);
-			await waitForVisibleTextMatcher(`${newMessage[translatedLanguage]} - ${randomMatcher}`, textMatcher);
+			const data = await sendMessageOnTranslationTestRoom(`${newMessage[languages.default]} - ${randomMatcher}`);
+			await waitForVisibleTextMatcher(`${newMessage[languages.translated]} - ${randomMatcher}`, textMatcher);
 			await deleteMessageOnTranslationTestRoom(data);
 		});
 
 		it('should see original message', async () => {
 			const randomMatcher = random();
-			const data = await sendMessageOnTranslationTestRoom(`${newMessage[defaultLanguage]} - ${randomMatcher}`);
-			await waitForVisibleTextMatcher(`${newMessage[translatedLanguage]} - ${randomMatcher}`, textMatcher);
+			const data = await sendMessageOnTranslationTestRoom(`${newMessage[languages.default]} - ${randomMatcher}`);
+			await waitForVisibleTextMatcher(`${newMessage[languages.translated]} - ${randomMatcher}`, textMatcher);
 
-			await tryTapping(element(by[textMatcher](`${newMessage[translatedLanguage]} - ${randomMatcher}`)).atIndex(0), 2000, true);
+			await tryTapping(element(by[textMatcher](`${newMessage[languages.translated]} - ${randomMatcher}`)).atIndex(0), 2000, true);
 
 			await waitForVisible('action-sheet-handle');
 			await element(by.id('action-sheet-handle')).swipe('up', 'fast', 0.5);
@@ -156,16 +159,16 @@ describe('Auto Translate', () => {
 			await waitForVisibleTextMatcher('View original', textMatcher);
 			await element(by[textMatcher]('View original')).atIndex(0).tap();
 
-			await waitForVisibleTextMatcher(`${newMessage[defaultLanguage]} - ${randomMatcher}`, textMatcher);
+			await waitForVisibleTextMatcher(`${newMessage[languages.default]} - ${randomMatcher}`, textMatcher);
 
 			await deleteMessageOnTranslationTestRoom(data);
 		});
 
 		it('disable auto translate and see original message', async () => {
 			const randomMatcher = random();
-			const data = await sendMessageOnTranslationTestRoom(`${newMessage[defaultLanguage]} - ${randomMatcher}`);
+			const data = await sendMessageOnTranslationTestRoom(`${newMessage[languages.default]} - ${randomMatcher}`);
 
-			await waitForVisibleTextMatcher(`${newMessage[translatedLanguage]} - ${randomMatcher}`, textMatcher);
+			await waitForVisibleTextMatcher(`${newMessage[languages.translated]} - ${randomMatcher}`, textMatcher);
 
 			await element(by.id('room-header')).tap();
 			await waitForVisible('room-actions-view');
@@ -180,7 +183,7 @@ describe('Auto Translate', () => {
 			await tapBack();
 			await tapBack();
 
-			await waitForVisibleTextMatcher(`${newMessage[defaultLanguage]} - ${randomMatcher}`, textMatcher);
+			await waitForVisibleTextMatcher(`${newMessage[languages.default]} - ${randomMatcher}`, textMatcher);
 
 			await deleteMessageOnTranslationTestRoom(data);
 		});
