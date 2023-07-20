@@ -94,8 +94,7 @@ class MessageContainer extends React.Component<IMessageContainerProps, IMessageC
 
 	shouldComponentUpdate(nextProps: IMessageContainerProps, nextState: IMessageContainerState) {
 		const { isManualUnignored } = this.state;
-		const { threadBadgeColor, isIgnored, highlighted, previousItem, autoTranslateRoom } = this.props;
-
+		const { threadBadgeColor, isIgnored, highlighted, previousItem, autoTranslateRoom, autoTranslateLanguage } = this.props;
 		if (nextProps.highlighted !== highlighted) {
 			return true;
 		}
@@ -111,7 +110,7 @@ class MessageContainer extends React.Component<IMessageContainerProps, IMessageC
 		if (nextProps.previousItem?._id !== previousItem?._id) {
 			return true;
 		}
-		if (nextProps.autoTranslateRoom !== autoTranslateRoom) {
+		if (nextProps.autoTranslateRoom !== autoTranslateRoom || nextProps.autoTranslateLanguage !== autoTranslateLanguage) {
 			return true;
 		}
 		return false;

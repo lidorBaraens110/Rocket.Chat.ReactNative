@@ -138,7 +138,9 @@ const roomAttrsUpdate = [
 	'status',
 	'lastMessage',
 	'onHold',
-	't'
+	't',
+	'autoTranslate',
+	'autoTranslateLanguage'
 ] as TRoomUpdate[];
 
 interface IRoomViewProps extends IActionSheetProvider, IBaseScreen<ChatsStackParamList, 'RoomView'> {
@@ -1491,7 +1493,7 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 
 	render() {
 		console.count(`${this.constructor.name}.render calls`);
-		const { room, loading } = this.state;
+		const { room, loading, canAutoTranslate } = this.state;
 		const { user, baseUrl, theme, navigation, Hide_System_Messages, width, serverVersion } = this.props;
 		const { rid, t } = room;
 		let sysMes;
@@ -1514,6 +1516,8 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 					tmid={this.tmid}
 					tunread={tunread}
 					ignored={ignored}
+					autoTranslateRoom={canAutoTranslate && 'id' in room && room.autoTranslate}
+					autoTranslateLanguage={'id' in room ? room.autoTranslateLanguage : undefined}
 					renderRow={this.renderItem}
 					loading={loading}
 					navigation={navigation}
