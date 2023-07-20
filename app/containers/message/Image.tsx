@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import { StyleProp, TextStyle, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import { dequal } from 'dequal';
 import { createImageProgress } from 'react-native-image-progress';
 import * as Progress from 'react-native-progress';
 
@@ -57,49 +56,48 @@ export const MessageImage = React.memo(({ imgUri, theme }: { imgUri: string; the
 	/>
 ));
 
-const ImageContainer = React.memo(
-	({ file, imageUrl, showAttachment, getCustomEmoji, style, isReply, msg }: IMessageImage) => {
-		const { theme } = useTheme();
-		const { baseUrl, user } = useContext(MessageContext);
-		const img = imageUrl || formatAttachmentUrl(file.image_url, user.id, user.token, baseUrl);
+const ImageContainer = ({
+	file,
+	imageUrl,
+	showAttachment,
+	getCustomEmoji,
+	style,
+	isReply,
+	msg
+}: IMessageImage): React.ReactElement | null => {
+	const { theme } = useTheme();
+	const { baseUrl, user } = useContext(MessageContext);
+	const img = imageUrl || formatAttachmentUrl(file.image_url, user.id, user.token, baseUrl);
 
-		if (!img) {
-			return null;
+	if (!img) {
+		return null;
+	}
+
+	const onPress = () => {
+		if (!showAttachment) {
+			return;
 		}
 
-		const onPress = () => {
-			if (!showAttachment) {
-				return;
-			}
+		return showAttachment(file);
+	};
 
-			return showAttachment(file);
-		};
-
-		if (msg) {
-			return (
-				<Button disabled={isReply} theme={theme} onPress={onPress}>
-					<View>
-						<Markdown
-							msg={msg}
-							style={[isReply && style]}
-							username={user.username}
-							getCustomEmoji={getCustomEmoji}
-							theme={theme}
-						/>
-						<MessageImage imgUri={img} theme={theme} />
-					</View>
-				</Button>
-			);
-		}
-
+	if (msg) {
 		return (
 			<Button disabled={isReply} theme={theme} onPress={onPress}>
-				<MessageImage imgUri={img} theme={theme} />
+				<View>
+					<Markdown msg={msg} style={[isReply && style]} username={user.username} getCustomEmoji={getCustomEmoji} theme={theme} />
+					<MessageImage imgUri={img} theme={theme} />
+				</View>
 			</Button>
 		);
-	},
-	(prevProps, nextProps) => dequal(prevProps.file, nextProps.file)
-);
+	}
+
+	return (
+		<Button disabled={isReply} theme={theme} onPress={onPress}>
+			<MessageImage imgUri={img} theme={theme} />
+		</Button>
+	);
+};
 
 ImageContainer.displayName = 'MessageImageContainer';
 MessageImage.displayName = 'MessageImage';

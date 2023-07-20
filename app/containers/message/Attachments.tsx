@@ -1,5 +1,4 @@
 import React, { useContext } from 'react';
-import { dequal } from 'dequal';
 
 import { IMessageAttachments } from './interfaces';
 import Image from './Image';
@@ -54,86 +53,91 @@ const AttachedActions = ({ attachment, getCustomEmoji }: { attachment: IAttachme
 	);
 };
 
-const Attachments: React.FC<IMessageAttachments> = React.memo(
-	({ attachments, timeFormat, showAttachment, style, getCustomEmoji, isReply, id }: IMessageAttachments) => {
-		const { theme } = useTheme();
-		const { translateLanguage } = useContext(MessageContext);
+const Attachments: React.FC<IMessageAttachments> = ({
+	attachments,
+	timeFormat,
+	showAttachment,
+	style,
+	getCustomEmoji,
+	isReply,
+	id
+}: IMessageAttachments) => {
+	const { theme } = useTheme();
+	const { translateLanguage } = useContext(MessageContext);
 
-		if (!attachments || attachments.length === 0) {
-			return null;
+	if (!attachments || attachments.length === 0) {
+		return null;
+	}
+
+	const attachmentsElements = attachments.map((file: IAttachment, index: number) => {
+		const msg = getMessageFromAttachment(file, translateLanguage);
+
+		if (file && file.image_url) {
+			return (
+				<Image
+					key={file.image_url}
+					file={file}
+					showAttachment={showAttachment}
+					getCustomEmoji={getCustomEmoji}
+					style={style}
+					isReply={isReply}
+					msg={msg}
+				/>
+			);
 		}
 
-		const attachmentsElements = attachments.map((file: IAttachment, index: number) => {
-			const msg = getMessageFromAttachment(file, translateLanguage);
-
-			if (file && file.image_url) {
-				return (
-					<Image
-						key={file.image_url}
-						file={file}
-						showAttachment={showAttachment}
-						getCustomEmoji={getCustomEmoji}
-						style={style}
-						isReply={isReply}
-						msg={msg}
-					/>
-				);
-			}
-
-			if (file && file.audio_url) {
-				return (
-					<Audio
-						key={file.audio_url}
-						file={file}
-						getCustomEmoji={getCustomEmoji}
-						isReply={isReply}
-						style={style}
-						theme={theme}
-						messageId={id}
-						msg={msg}
-					/>
-				);
-			}
-
-			if (file.video_url) {
-				return (
-					<Video
-						key={file.video_url}
-						file={file}
-						showAttachment={showAttachment}
-						getCustomEmoji={getCustomEmoji}
-						style={style}
-						isReply={isReply}
-						msg={msg}
-					/>
-				);
-			}
-
-			if (file && file.actions && file.actions.length > 0) {
-				return <AttachedActions attachment={file} getCustomEmoji={getCustomEmoji} />;
-			}
-			if (typeof file.collapsed === 'boolean') {
-				return (
-					<CollapsibleQuote key={index} index={index} attachment={file} timeFormat={timeFormat} getCustomEmoji={getCustomEmoji} />
-				);
-			}
-
+		if (file && file.audio_url) {
 			return (
-				<Reply
-					key={index}
-					index={index}
-					attachment={file}
-					timeFormat={timeFormat}
+				<Audio
+					key={file.audio_url}
+					file={file}
 					getCustomEmoji={getCustomEmoji}
+					isReply={isReply}
+					style={style}
+					theme={theme}
 					messageId={id}
 					msg={msg}
 				/>
 			);
-		});
-		return <>{attachmentsElements}</>;
-	},
-	(prevProps, nextProps) => dequal(prevProps.attachments, nextProps.attachments)
-);
+		}
+
+		if (file.video_url) {
+			return (
+				<Video
+					key={file.video_url}
+					file={file}
+					showAttachment={showAttachment}
+					getCustomEmoji={getCustomEmoji}
+					style={style}
+					isReply={isReply}
+					msg={msg}
+				/>
+			);
+		}
+
+		if (file && file.actions && file.actions.length > 0) {
+			return <AttachedActions attachment={file} getCustomEmoji={getCustomEmoji} />;
+		}
+		if (typeof file.collapsed === 'boolean') {
+			return (
+				<CollapsibleQuote key={index} index={index} attachment={file} timeFormat={timeFormat} getCustomEmoji={getCustomEmoji} />
+			);
+		}
+
+		return (
+			<Reply
+				key={index}
+				index={index}
+				attachment={file}
+				timeFormat={timeFormat}
+				getCustomEmoji={getCustomEmoji}
+				messageId={id}
+				msg={msg}
+			/>
+		);
+	});
+	return <>{attachmentsElements}</>;
+};
 
 Attachments.displayName = 'MessageAttachments';
 
