@@ -65,8 +65,8 @@ describe('Auto Translate', () => {
 	};
 
 	const newMessage = {
-		pt: 'gato',
-		en: 'cat'
+		pt: 'mensagem nova',
+		en: 'new message'
 	};
 
 	beforeAll(async () => {
