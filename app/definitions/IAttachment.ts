@@ -1,4 +1,4 @@
-import { ITranslations } from './IMessage';
+import { IAttachmentTranslations } from './IMessage';
 import { IUser } from './IUser';
 
 export interface IAttachment {
@@ -29,7 +29,7 @@ export interface IAttachment {
 	color?: string;
 	thumb_url?: string;
 	collapsed?: boolean;
-	translations?: ITranslations;
+	translations?: IAttachmentTranslations;
 }
 
 export interface IServerAttachment {

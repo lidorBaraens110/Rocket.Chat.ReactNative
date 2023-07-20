@@ -41,7 +41,13 @@ export interface IEditedBy {
 
 export type TOnLinkPress = (link: string) => void;
 
-export interface ITranslations {
+export interface IMessageTranslations {
+	_id: string;
+	language: string;
+	value: string;
+}
+
+export interface IAttachmentTranslations {
 	[k: string]: string;
 }
 
@@ -134,7 +140,7 @@ export interface IMessage extends IMessageFromServer {
 	replies?: string[];
 	unread?: boolean;
 	autoTranslate?: boolean;
-	translations?: ITranslations;
+	translations?: IMessageTranslations[];
 	tmsg?: string;
 	blocks?: any;
 	e2e?: E2EType;
