@@ -60,8 +60,8 @@ describe('Auto Translate', () => {
 	const translatedLanguage = 'pt';
 
 	const oldMessage = {
-		pt: 'mensagem que não deveria ser traduzida',
-		en: 'message that should not be translated'
+		pt: 'mensagem antiga',
+		en: 'old message'
 	};
 
 	const newMessage = {
