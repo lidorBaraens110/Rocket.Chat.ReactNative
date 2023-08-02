@@ -383,15 +383,16 @@ class MessageContainer extends React.Component<IMessageContainerProps, IMessageC
 
 		let message = msg;
 		let isTranslated = false;
+		const otherUserMessage = u.username !== user.username;
 		// "autoTranslateRoom" and "autoTranslateLanguage" are properties from the subscription
 		// "autoTranslateMessage" is a toggle between "View Original" and "Translate" state
-		if (autoTranslateRoom && autoTranslateMessage && autoTranslateLanguage) {
+		if (autoTranslateRoom && autoTranslateMessage && autoTranslateLanguage && otherUserMessage) {
 			const messageTranslated = getMessageTranslation(item, autoTranslateLanguage);
 			isTranslated = !!messageTranslated;
 			message = messageTranslated || message;
 		}
 
-		const canTranslateMessage = autoTranslateRoom && autoTranslateLanguage && autoTranslateMessage !== false;
+		const canTranslateMessage = autoTranslateRoom && autoTranslateLanguage && autoTranslateMessage !== false && otherUserMessage;
 
 		return (
 			<MessageContext.Provider
