@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react';
 import { StyleProp, StyleSheet, TextStyle } from 'react-native';
-import { dequal } from 'dequal';
 
 import Touchable from './Touchable';
 import Markdown from '../markdown';
@@ -41,56 +40,53 @@ interface IMessageVideo {
 	msg?: string;
 }
 
-const Video = React.memo(
-	({ file, showAttachment, getCustomEmoji, style, isReply, msg }: IMessageVideo) => {
-		const { baseUrl, user } = useContext(MessageContext);
-		const [loading, setLoading] = useState(false);
-		const { theme } = useTheme();
+const Video = ({ file, showAttachment, getCustomEmoji, style, isReply, msg }: IMessageVideo) => {
+	const { baseUrl, user } = useContext(MessageContext);
+	const [loading, setLoading] = useState(false);
+	const { theme } = useTheme();
 
-		if (!baseUrl) {
-			return null;
+	if (!baseUrl) {
+		return null;
+	}
+
+	const onPress = async () => {
+		if (file.video_type && isTypeSupported(file.video_type) && showAttachment) {
+			return showAttachment(file);
 		}
 
-		const onPress = async () => {
-			if (file.video_type && isTypeSupported(file.video_type) && showAttachment) {
-				return showAttachment(file);
-			}
+		if (!isIOS && file.video_url) {
+			const uri = formatAttachmentUrl(file.video_url, user.id, user.token, baseUrl);
+			await downloadVideo(uri);
+			return;
+		}
+		EventEmitter.emit(LISTENER, { message: I18n.t('Unsupported_format') });
+	};
 
-			if (!isIOS && file.video_url) {
-				const uri = formatAttachmentUrl(file.video_url, user.id, user.token, baseUrl);
-				await downloadVideo(uri);
-				return;
-			}
-			EventEmitter.emit(LISTENER, { message: I18n.t('Unsupported_format') });
-		};
+	const downloadVideo = async (uri: string) => {
+		setLoading(true);
+		const fileDownloaded = await fileDownload(uri, file);
+		setLoading(false);
 
-		const downloadVideo = async (uri: string) => {
-			setLoading(true);
-			const fileDownloaded = await fileDownload(uri, file);
-			setLoading(false);
+		if (fileDownloaded) {
+			EventEmitter.emit(LISTENER, { message: I18n.t('saved_to_gallery') });
+			return;
+		}
+		EventEmitter.emit(LISTENER, { message: I18n.t('error-save-video') });
+	};
 
-			if (fileDownloaded) {
-				EventEmitter.emit(LISTENER, { message: I18n.t('saved_to_gallery') });
-				return;
-			}
-			EventEmitter.emit(LISTENER, { message: I18n.t('error-save-video') });
-		};
-
-		return (
-			<>
-				<Markdown msg={msg} username={user.username} getCustomEmoji={getCustomEmoji} style={[isReply && style]} theme={theme} />
-				<Touchable
-					disabled={isReply}
-					onPress={onPress}
-					style={[styles.button, { backgroundColor: themes[theme].videoBackground }]}
-					background={Touchable.Ripple(themes[theme].bannerBackground)}
-				>
-					{loading ? <RCActivityIndicator /> : <CustomIcon name='play-filled' size={54} color={themes[theme].buttonText} />}
-				</Touchable>
-			</>
-		);
-	},
-	(prevProps, nextProps) => dequal(prevProps.file, nextProps.file)
-);
+	return (
+		<>
+			<Markdown msg={msg} username={user.username} getCustomEmoji={getCustomEmoji} style={[isReply && style]} theme={theme} />
+			<Touchable
+				disabled={isReply}
+				onPress={onPress}
+				style={[styles.button, { backgroundColor: themes[theme].videoBackground }]}
+				background={Touchable.Ripple(themes[theme].bannerBackground)}
+			>
+				{loading ? <RCActivityIndicator /> : <CustomIcon name='play-filled' size={54} color={themes[theme].buttonText} />}
+			</Touchable>
+		</>
+	);
+};
 
 export default Video;
